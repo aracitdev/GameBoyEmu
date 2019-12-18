@@ -13,11 +13,12 @@ Doesn't provide many features other than the basic game keys and a few keys that
   * ']' - speeds up emulation by a factor of two
   * The arrow keys are the dpad.
   * 'a' - start
-  * 'b' - select
+  * 's' - select
   * 'F9' - decreases the number of frames skipped for drawing (slows down game but smoother)
   * 'F10' - increases the number of frames skipped for drawing (speeds up game but choppy)
   * 'x' - the a button
   * 'z' - the b button
+
 The default speed (assuming your computer can keep up) is 60hz (the native gameboy speed). If the game seems a bit slow on the default speed, then increase frameskip. There is no SRAM support nor save states, nor does it support the gameboy color.
 
 ## Games
