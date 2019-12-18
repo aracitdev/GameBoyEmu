@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DeadZone>50</DeadZone>
+<FrameSkip>0</FrameSkip>
+<RunBootrom>0</RunBootrom>
+<Fullscreen>0</Fullscreen>
+<WindowX>320</WindowX>
+<WindowY>288</WindowY>
+<Bindings>
+    <EXIT>Escape</EXIT>
+    <START>A</START>
+    <SELECT>S</SELECT>
+    <A>X</A>
+    <B>Z</B>
+    <DPAD_UP>Up</DPAD_UP>
+    <DPAD_DOWN>Down</DPAD_DOWN>
+    <DPAD_LEFT>Left</DPAD_LEFT>
+    <DPAD_RIGHT>Right</DPAD_RIGHT>
+    <INCREASE_FRAMESKIP>F10</INCREASE_FRAMESKIP>
+    <DECREASE_FRAMESKIP>F9</DECREASE_FRAMESKIP>
+    <INCREASE_VOLUME>Equal</INCREASE_VOLUME>
+    <DECREASE_VOLUME>Hyphen</DECREASE_VOLUME>
+    <CHANNEL_1>F1</CHANNEL_1>
+    <CHANNEL_2>F2</CHANNEL_2>
+    <CHANNEL_3>F3</CHANNEL_3>
+    <SPEED_UP>RBracket</SPEED_UP>
+    <SPEED_DOWN>LBracket</SPEED_DOWN>
+</Bindings>
