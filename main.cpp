@@ -55,9 +55,8 @@ int main()
         return 0;
     }
     GameBoy GB;
-    sf::RenderWindow Window(sf::VideoMode(160/*32*8*/,144/*32*8*/), "Test");
-    GB.GPU.FrameSkip = 0;
-    if(!GB.Init(Buffer, FileSize, Window))
+    sf::RenderWindow Window;
+    if(!GB.Init(Buffer, FileSize, Window, filename))
     {
         Debug.Log("Failed to initialize the gameboy emulator", DebugLog::FatalError, "main.cpp");
         return 0;

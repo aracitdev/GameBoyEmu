@@ -1,2 +1,8 @@
+/obj/
 *.o
 *.exe
+*.dll
+/bin/
+*.cbp
+*.depend
+*.state

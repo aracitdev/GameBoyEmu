@@ -132,3 +132,19 @@ void Apu::DisableWaveformViewer(void)
     if(waveformViewerWindow)
         delete waveformViewerWindow;
 }
+
+bool Apu::SaveState(std::ofstream& out)
+{
+    out.write((const char*)(&channel1Clocks), sizeof(channel1Clocks));
+    out.write((const char*)(&channel2Clocks), sizeof(channel2Clocks));
+    out.write((const char*)(&channel3Clocks), sizeof(channel3Clocks));
+    return true;
+}
+
+bool Apu::LoadState(std::ifstream& in)
+{
+    in.read((char*)(&channel1Clocks), sizeof(channel1Clocks));
+    in.read((char*)(&channel2Clocks), sizeof(channel2Clocks));
+    in.read((char*)(&channel3Clocks), sizeof(channel3Clocks));
+    return true;
+}

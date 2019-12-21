@@ -1,5 +1,5 @@
 #
-# 'make depend' uses makedepend to automatically generate dependencies 
+# 'make depend' uses makedepend to automatically generate dependencies
 #               (dependencies are added to end of Makefile)
 # 'make'        build executable file 'GameBoyEmulator.exe'
 # 'make clean'  removes all .o and executable files
@@ -20,13 +20,13 @@ INCLUDES = -I../include
 #   their path using -Lpath, something like:
 LFLAGS = -L../lib
 
-# link to the sfml libraries and tinyxml 
-LIBS = -lsfml-system -lsfml-audio -lsfml-graphics -ltinyxml2
+# link to the sfml libraries and tinyxml
+LIBS = -lsfml-system -lsfml-audio -lsfml-window -lsfml-graphics -ltinyxml2
 
 # define the C source files
-SRCS = Apu.cpp BitFunctions.cpp Cart.cpp CartHeader.cpp Cpu.cpp DebugLog.cpp GameBoy.cpp Gpu.cpp main.cpp MBC.cpp Mmu.cpp OpFuncs.cpp Refference.cpp RomOnly.cpp TableGenerator.cpp Timer.cpp Apu/SquareGenerator.cpp Apu/WaveGenerator.cpp Debugger/Debugger.cpp Instruction/Arithmetic.cpp Instruction/Control.cpp Instruction/Memory.cpp Instruction/OpCodeTable.cpp Video/Pallete.cpp Video/Tile.cpp
+SRCS = Apu.cpp BitFunctions.cpp Cart.cpp CartHeader.cpp ConfigLoader.cpp Cpu.cpp DebugLog.cpp GameBoy.cpp Gpu.cpp main.cpp MBC.cpp Mmu.cpp OpFuncs.cpp Refference.cpp RomOnly.cpp TableGenerator.cpp Timer.cpp Apu/SquareGenerator.cpp Apu/WaveGenerator.cpp Debugger/Debugger.cpp Instruction/Arithmetic.cpp Instruction/Control.cpp Instruction/Memory.cpp Instruction/OpCodeTable.cpp Video/Pallete.cpp Video/Tile.cpp
 
-# define the C object files 
+# define the C object files
 #
 # This uses Suffix Replacement within a macro:
 #   $(name:string1=string2)
@@ -36,11 +36,11 @@ SRCS = Apu.cpp BitFunctions.cpp Cart.cpp CartHeader.cpp Cpu.cpp DebugLog.cpp Gam
 #
 OBJS = $(SRCS:.c=.o)
 
-# define the executable file 
-MAIN = GameBoyEmulator.exe
+# define the executable file
+MAIN = bin/GameBoyEmulator.exe
 
 #
-# The following part of the makefile is generic; it can be used to 
+# The following part of the makefile is generic; it can be used to
 # build any executable just by changing the definitions above and by
 # deleting dependencies appended to the file from 'make depend'
 #
@@ -50,12 +50,11 @@ MAIN = GameBoyEmulator.exe
 all:    $(MAIN)
 	@echo  GameBoyEmulator Compiled
 
-$(MAIN): $(OBJS) 
+$(MAIN): $(OBJS)
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
-
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
+# the rule(a .c file) and $@: the name of the target of the rule (a .o file)
 # (see the gnu make manual section about automatic variables)
 .c.o:
 	$(CXX) $(CFLAGS) $(INCLUDES) -c $<  -o $@

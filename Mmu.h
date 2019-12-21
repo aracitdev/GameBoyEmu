@@ -19,6 +19,10 @@ class Mmu
 
     uint8_t* GetPointer(uint16_t Address);
 
+
+    bool SaveState(std::ofstream& out);
+    bool LoadState(std::ifstream& in);
+
     uint8_t InternalRam[MemoryMap::IntRam0Size * 8];
     uint8_t HardwareRegisters[MemoryMap::HardwareRegsSize];
     uint8_t Zero[0xFFFF - 0xFF80];

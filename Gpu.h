@@ -1,5 +1,7 @@
 #ifndef GPU_H_INCLUDED
 #define GPU_H_INCLUDED
+#include <fstream>
+#include <string>
 #include "MemoryMap.h"
 #include "Memory.h"
 #include "Cpu.h"
@@ -63,6 +65,8 @@ public:
     void DoDMATransfer(void);
     void Clear(void);
     void Init(sf::RenderWindow& W, uint8_t* I, Mmu* M);
+    bool SaveState(std::ofstream& out);
+    bool LoadState(std::ifstream& in);
 
     std::array<Color, 8> GetTileScanline(uint8_t Scanline, uint8_t TileNumber);
 

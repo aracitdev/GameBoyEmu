@@ -153,7 +153,7 @@ RAMSize GetRamSizeCode(uint8_t size_code)
 }
 
 
-const uint32_t RamSizes[]={0, KB(2),KB(8),KB(32),KB(128),KB(64)};
+const uint32_t RamSizes[]={KB(2),KB(8),KB(32),KB(128),KB(64),0};
 
 uint32_t GetRamSize(RAMSize size)
 {
@@ -215,11 +215,12 @@ std::string GetTitle(uint8_t* rom)
 {
     const size_t Size=0x013E - 0x0134;
     char name[Size] = {0};
-    for (uint8_t i = 0; i < Size; i++)
+    uint8_t i;
+    for (i = 0; i < Size && rom[HeaderLocations::Title + i]; i++)
     {
         name[i] = static_cast<char>(rom[HeaderLocations::Title + i]);
     }
-    return std::string(name);
+    return std::string(name,i);
 }
 
     void CartHeader::Create(uint8_t* RomBytes)

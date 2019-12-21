@@ -1,6 +1,8 @@
 #ifndef CPU_H_INCLUDED
 #define CPU_H_INCLUDED
 //#include "Memory.h"
+#include <fstream>
+
 #include "MemoryMap.h"
 #include "Mmu.h"
 #include "BitFunctions.h"
@@ -129,6 +131,9 @@ public:
     bool Stopped=false;
 
     void DumpRegisters(std::ostream& out);
+
+    bool SaveState(std::ofstream& out);
+    bool LoadState(std::ifstream& in);
 
     uint8_t OpCode;
     bool OpCodeCB;

@@ -24,6 +24,9 @@ public:
 
     virtual uint8_t* GetPointer(uint16_t Address);
 
+    virtual bool LoadState(std::ifstream& in);
+    virtual bool SaveState(std::ofstream& out);
+
     bool RamEnabled=false;
     uint8_t CurrentRamBank=1;
     uint8_t CurrentRomBank=1;
@@ -45,6 +48,8 @@ public:
 
     virtual uint8_t Read(uint16_t Address);
 
+    virtual bool LoadState(std::ifstream& in);
+    virtual bool SaveState(std::ofstream& out);
 
     virtual uint8_t* GetPointer(uint16_t Address);
 
@@ -68,6 +73,8 @@ public:
 
     virtual uint8_t Read(uint16_t Address);
 
+    virtual bool LoadState(std::ifstream& in);
+    virtual bool SaveState(std::ofstream& out);
     virtual uint8_t* GetPointer(uint16_t Address);
 
     bool RamEnabled=false;

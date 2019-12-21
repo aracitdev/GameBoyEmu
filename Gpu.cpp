@@ -339,3 +339,29 @@ void Gpu::DumpCharMemoryAsImage(std::string filename)
     }
     Out.saveToFile(filename);
 }
+
+
+bool Gpu::SaveState(std::ofstream& out)
+{
+    std::cout << out.tellp()<<"\n";
+    uint8_t currentMode = (uint8_t)(CurrentMode);
+    out.write((const char*)(BGMap),MemoryMap::BGMap1Size + MemoryMap::BGMap2Size);
+    out.write((const char*)(OEM), MemoryMap::OemSize);
+    out.write((const char*)(CharMemory), MemoryMap::CRamSize);
+    out.write((const char*)(&CurrentCycles), sizeof(CurrentCycles));
+    out.write((const char*)(&currentMode), sizeof(currentMode));
+    out.write((const char*)(&DmaTransferStarted), sizeof(DmaTransferStarted));
+    return true;
+}
+bool Gpu::LoadState(std::ifstream& in)
+{
+    uint8_t currentMode = 0;
+    in.read((char*)(BGMap),MemoryMap::BGMap1Size + MemoryMap::BGMap2Size);
+    in.read((char*)(OEM), MemoryMap::OemSize);
+    in.read((char*)(CharMemory), MemoryMap::CRamSize);
+    in.read((char*)(&CurrentCycles), sizeof(CurrentCycles));
+    in.read((char*)(&currentMode), sizeof(currentMode));
+    in.read((char*)(&DmaTransferStarted), sizeof(DmaTransferStarted));
+    CurrentMode = (VideoMode)(currentMode);
+    return true;
+}

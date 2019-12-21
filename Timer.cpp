@@ -69,3 +69,20 @@ void Timer::Tick(uint32_t Cycles)
     HandleLockedTimer(Cycles);
     HandleTIMA(Cycles);
 }
+
+
+bool Timer::SaveState(std::ofstream& out)
+{
+    out.write((const char*)(&GlobalTimerValue), sizeof(GlobalTimerValue));
+    out.write((const char*)(&LastTimeConfig),sizeof(LastTimeConfig));
+    out.write((const char*)(&ShouldTimaReset), sizeof(ShouldTimaReset));
+    return true;
+}
+
+bool Timer::LoadState(std::ifstream& in)
+{
+    in.read((char*)(&GlobalTimerValue), sizeof(GlobalTimerValue));
+    in.read((char*)(&LastTimeConfig),sizeof(LastTimeConfig));
+    in.read((char*)(&ShouldTimaReset), sizeof(ShouldTimaReset));
+    return true;
+}

@@ -2,7 +2,8 @@
 
 const char* BindingNames[]={"START","SELECT","A","B","DPAD_UP","DPAD_DOWN", "DPAD_LEFT","DPAD_RIGHT",
                             "INCREASE_FRAMESKIP","DECREASE_FRAMESKIP","INCREASE_VOLUME","DECREASE_VOLUME","CHANNEL_1","CHANNEL_2","CHANNEL_3",
-                            "SPEED_UP","SPEED_DOWN","EXIT"};
+                            "SPEED_UP","SPEED_DOWN","EXIT", "SAVESTATE_1","SAVESTATE_2","SAVESTATE_3","SAVESTATE_4","SAVESTATE_5","SAVESTATE_6",
+                            "SAVESTATE_7","SAVESTATE_8", "SAVESTATE_9","SAVESTATE_0","LOAD_SAVESTATE","SAVE_SAVESTATE"};
 
 const char* ButtonNames[]={ "A", "B", "C","D", "E", "F", "G", "H", "I" , "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S" ,
                             "T", "U", "V", "W", "X", "Y", "Z", "Num0", "Num1", "Num2", "Num3", "Num4", "Num5", "Num6", "Num7", "Num8",
@@ -38,7 +39,19 @@ const BindingEntry DefaultEntry[BindingEntry::BINDING_COUNT]=
     BindingEntry(sf::Keyboard::F3),     //Toggle channel 3 audio
     BindingEntry(sf::Keyboard::RBracket),   //speed up
     BindingEntry(sf::Keyboard::LBracket),    //slow down
-    BindingEntry(sf::Keyboard::Escape)
+    BindingEntry(sf::Keyboard::Escape),     //exit
+    BindingEntry(sf::Keyboard::Num1),       //savestate 1
+    BindingEntry(sf::Keyboard::Num2),       //savestate 2
+    BindingEntry(sf::Keyboard::Num3),       //savestate 3
+    BindingEntry(sf::Keyboard::Num4),       //savestate 4
+    BindingEntry(sf::Keyboard::Num5),       //savestate 5
+    BindingEntry(sf::Keyboard::Num6),       //savestate 6
+    BindingEntry(sf::Keyboard::Num7),       //savestate 7
+    BindingEntry(sf::Keyboard::Num8),       //savestate 8
+    BindingEntry(sf::Keyboard::Num9),       //savestate 9
+    BindingEntry(sf::Keyboard::Num0),       //savestate 0
+    BindingEntry(sf::Keyboard::F5),         //load state
+    BindingEntry(sf::Keyboard::F6)         //save state
 };
 
 BindingEntry::BindingEntry()

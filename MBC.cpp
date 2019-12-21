@@ -71,6 +71,30 @@ uint8_t* MBC1::GetPointer(uint16_t Address)
     return 0x00;
 }
 
+bool MBC1::SaveState(std::ofstream& out)
+{
+    Cart::SaveState(out);
+    out.write((const char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    out.write((const char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    out.write((const char*)(&Lower), sizeof(Lower));
+    out.write((const char*)(&Upper), sizeof(Upper));
+    out.write((const char*)(&RamBanking),sizeof(RamBanking));
+    out.write((const char*)(&RamEnabled), sizeof(RamEnabled));
+    return true;
+}
+
+bool MBC1::LoadState(std::ifstream& in)
+{
+    Cart::LoadState(in);
+    in.read((char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    in.read((char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    in.read((char*)(&Lower), sizeof(Lower));
+    in.read((char*)(&Upper), sizeof(Upper));
+    in.read((char*)(&RamBanking), sizeof(RamBanking));
+    in.read((char*)(&RamEnabled),sizeof(RamEnabled));
+    return true;
+}
+
 MBC3::MBC3(uint8_t* Buffer, size_t size)
 {
     Head.Create(Buffer);
@@ -138,6 +162,28 @@ uint8_t* MBC3::GetPointer(uint16_t Address)
     if(Address >= 0xA000 && Address <= 0xBFFF)
         return &(Ram[Address - 0xA000 + CurrentRamBank * (0x2000)]);
     return 0x00;
+}
+
+bool MBC3::SaveState(std::ofstream& out)
+{
+    Cart::SaveState(out);
+    out.write((const char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    out.write((const char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    out.write((const char*)(&Lower), sizeof(Lower));
+    out.write((const char*)(&Upper), sizeof(Upper));
+    out.write((const char*)(&RamEnabled),sizeof(RamEnabled));
+    return true;
+}
+
+bool MBC3::LoadState(std::ifstream& in)
+{
+    Cart::LoadState(in);
+    in.read((char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    in.read((char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    in.read((char*)(&Lower), sizeof(Lower));
+    in.read((char*)(&Upper), sizeof(Upper));
+    in.read((char*)(&RamEnabled), sizeof(RamEnabled));
+    return true;
 }
 
 MBC5::MBC5(uint8_t* Buffer, size_t size)
@@ -213,4 +259,29 @@ uint8_t* MBC5::GetPointer(uint16_t Address)
     if(Address >= 0xA000 && Address <= 0xBFFF)
         return &(Ram[Address - 0xA000 + CurrentRamBank * (0x2000)]);
     return 0x00;
+}
+
+
+
+bool MBC5::SaveState(std::ofstream& out)
+{
+    Cart::SaveState(out);
+    out.write((const char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    out.write((const char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    out.write((const char*)(&Lower), sizeof(Lower));
+    out.write((const char*)(&Upper), sizeof(Upper));
+    out.write((const char*)(&RamEnabled),sizeof(RamEnabled));
+    return true;
+}
+
+
+bool MBC5::LoadState(std::ifstream& in)
+{
+    Cart::LoadState(in);
+    in.read((char*)(&CurrentRamBank), sizeof(CurrentRamBank));
+    in.read((char*)(&CurrentRomBank), sizeof(CurrentRomBank));
+    in.read((char*)(&Lower), sizeof(Lower));
+    in.read((char*)(&Upper), sizeof(Upper));
+    in.read((char*)(&RamEnabled), sizeof(RamEnabled));
+    return true;
 }

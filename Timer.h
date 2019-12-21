@@ -15,6 +15,9 @@ public:
 
     void Tick(uint32_t Cycles);
 
+    bool SaveState(std::ofstream& out);
+    bool LoadState(std::ifstream& in);
+
 private:
 
     const uint32_t CPUClockCyclesHz = 4194304;

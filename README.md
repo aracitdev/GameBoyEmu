@@ -3,7 +3,7 @@ A gameboy emulator made using SFML and C++.
 This is just a test project I made while exploring emulation for fun. There are many games that it runs properly, however there are often graphical bugs and some games that it just crashes on opening.
 
 ## Features
-Doesn't provide many features other than the basic game keys and a few keys that change emulation.
+Doesn't provide many features other than the basic game keys and a few keys that change emulation and now save states.
   * '=' - increases the volume of the audio
   * '-' - decreases the volume of the audio
   * 'F1' - toggles the audio for the audio channel 1 on/off
@@ -18,6 +18,10 @@ Doesn't provide many features other than the basic game keys and a few keys that
   * 'F10' - increases the number of frames skipped for drawing (speeds up game but choppy)
   * 'x' - the a button
   * 'z' - the b button
+  * Keys '1' -'0' on the top of the keyboard change current active save state(0-9)
+  * 'F5' is load sate
+  * 'F6' is save state
+States are saved under the file RomNameStateNumber.state
 
 The default speed (assuming your computer can keep up) is 60hz (the native gameboy speed). If the game seems a bit slow on the default speed, then increase frameskip. There is no SRAM support nor save states, nor does it support the gameboy color.
 

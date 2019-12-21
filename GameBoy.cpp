@@ -2,12 +2,21 @@
 
 GameBoy::GameBoy(): CPU(MMU)
 {
+    GameView=nullptr;
     Cartridge=0;
     SpeedMultiplier = 1.0;
 }
 
-bool GameBoy::Init(uint8_t* RomData, size_t Size,sf::RenderWindow& W)
+GameBoy::~GameBoy()
 {
+    if(GameView)
+        delete GameView;
+}
+
+bool GameBoy::Init(uint8_t* RomData, size_t Size,sf::RenderWindow& W, const std::string& filenm)
+{
+    currentState=0;
+    fileName=filenm;
     CartHeader Head;
     Head.Create(RomData);
     switch(Head.Type)
@@ -30,19 +39,44 @@ bool GameBoy::Init(uint8_t* RomData, size_t Size,sf::RenderWindow& W)
         return false;
         break;
     }
+    std::cout <<"Loaded cartridge type "<<ToString(Head.Type)<<"\n";
     MMU.Init(Cartridge, &GPU);
     CPU.Init();
     GPU.Init(W, CPU.IntterruptFlag, &MMU);
-    StartWithBootDMG(false);
+    Config.LoadConfig("config.xml");
+    StartWithBootDMG(Config.RunBootrom);
     APU.Init(&MMU);
     ProgramDebugger.Enable(&CPU, &MMU, Cartridge);
     Debug.Log("Init Done.", DebugLog::Info, "GameBoy.h");
     Window=&W;
-    Window->setTitle(Head.Title);
+    GameView=new sf::View(sf::FloatRect(0,0,160,144));
+    Window->create(sf::VideoMode(Config.WindowX, Config.WindowY),  Head.Title, Config.fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+    UpdateWindowView();
     Time.Init(&MMU);
-    In.Init(&MMU);
+    GPU.FrameSkip = Config.FrameSkip;
     UpdateSpeed();
     return true;
+}
+
+void GameBoy::UpdateWindowView(void)
+{
+    if(!GameView)
+        return;
+    float Ratio = (float)Window->getSize().x /(float)(Window->getSize().y);
+    float xAspectChange=0;
+    float yAspectChange=0;
+    if(Ratio > (144.0f / 160.0f))
+    {
+        float NewWindowX = ((float)Window->getSize().y * (160.0f / 144.0f)); //the y is the greatest, so push the x aspect to fit it
+        xAspectChange = ((float)Window->getSize().x - NewWindowX) / (float)(Window->getSize().x); //the ammount of the window that is not actually window
+    }
+    else
+    {
+        float NewWindowY = ((float)Window->getSize().x * (144.0f / 160.0f)); //x is the greatest, so push the y to fit it
+        yAspectChange = ((float)Window->getSize().y - NewWindowY) / (float)(Window->getSize().y);
+    }
+    GameView->setViewport(sf::FloatRect(xAspectChange/2, yAspectChange/2, 1-(xAspectChange), 1-(yAspectChange)));
+    Window->setView(*GameView);
 }
 
 void GameBoy::UpdateSpeed(void)
@@ -136,82 +170,135 @@ void GameBoy::Run(void)
 
     while(1)
     {
-        sf::Event event;
-        while (Window->pollEvent(event))
+        sf::Event ev;
+        while (Window->pollEvent(ev))
         {
-            if(event.type == sf::Event::Closed)
+            if(ev.type == sf::Event::Closed)
             {
                 return;
             }
-            if(event.type == sf::Event::KeyPressed)
+            else
+            if(ev.type == sf::Event::Resized)
             {
-                if(event.key.code == sf::Keyboard::F1)
-                {
-                    if(APU.channel1->getVolume() == 100)
-                        APU.channel1->setVolume(0);
-                    else
-                        APU.channel1->setVolume(100);
-                }
-                if(event.key.code == sf::Keyboard::F2)
-                {
-                    if(APU.channel2->getVolume() == 100)
-                        APU.channel2->setVolume(0);
-                    else
-                        APU.channel1->setVolume(100);
-                }
-                if(event.key.code == sf::Keyboard::F3)
-                {
-                    if(APU.channel3->getVolume() == 100)
-                        APU.channel3->setVolume(0);
-                    else
-                        APU.channel3->setVolume(100);
-                }
-                if(event.key.code == sf::Keyboard::RBracket)
-                {
-                    SpeedMultiplier /= 2;
-                    UpdateSpeed();
-                }
-                if(event.key.code == sf::Keyboard::LBracket)
-                {
-                    SpeedMultiplier *= 2;
-                    UpdateSpeed();
-                }
-                if(event.key.code == sf::Keyboard::Hyphen)
-                {
-                    APU.currentVolume -= 1/10.0;
-                }
-                if(event.key.code == sf::Keyboard::Equal)
-                {
-                    APU.currentVolume += 1/10.0;
-                }
-                if(event.key.code == sf::Keyboard::F9)
-                {
-                    if(GPU.FrameSkip!=0)
-                        GPU.FrameSkip-=1;
-                    UpdateSpeed();
-                }
-                if(event.key.code == sf::Keyboard::F10)
-                {
-                    GPU.FrameSkip+=1;
-                    UpdateSpeed();
-                }
+                UpdateWindowView();
+            }
+            else
+            if(Config.IsPressed(BindingEntry::EXIT))
+            {
+                return;
+            }
+            if(Config.IsPressed(BindingEntry::CHANNEL_1,ev))
+            {
+                if(APU.channel1->getVolume() == 100)
+                    APU.channel1->setVolume(0);
+                else
+                    APU.channel1->setVolume(100);
+            }
+            else
+            if(Config.IsPressed(BindingEntry::CHANNEL_2,ev))
+            {
+                if(APU.channel2->getVolume() == 100)
+                    APU.channel2->setVolume(0);
+                else
+                    APU.channel1->setVolume(100);
+            }
+            else
+            if(Config.IsPressed(BindingEntry::CHANNEL_3,ev))
+            {
+                if(APU.channel3->getVolume() == 100)
+                    APU.channel3->setVolume(0);
+                else
+                    APU.channel3->setVolume(100);
+            }
+            else
+            if(Config.IsPressed(BindingEntry::SPEED_UP,ev))
+            {
+                SpeedMultiplier /= 2;   //speed up
+                UpdateSpeed();
+            }
+            else
+            if(Config.IsPressed(BindingEntry::SPEED_DOWN,ev))
+            {
+                SpeedMultiplier *= 2;   //slow down
+                UpdateSpeed();
+            }
+            else
+            if(Config.IsPressed(BindingEntry::DECREASE_VOLUME, ev))
+                APU.currentVolume -= 1/10.0;
+            else
+            if(Config.IsPressed(BindingEntry::INCREASE_VOLUME, ev))
+                APU.currentVolume += 1/10.0;
+            else
+            if(Config.IsPressed(BindingEntry::DECREASE_FRAMESKIP, ev))
+            {
+                if(GPU.FrameSkip!=0)
+                    GPU.FrameSkip-=1;
+                UpdateSpeed();
+            }
+            else
+            if(Config.IsPressed(BindingEntry::INCREASE_FRAMESKIP,ev))
+            {
+                GPU.FrameSkip+=1;
+                UpdateSpeed();
+            }
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_0))
+                currentState=0;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_1))
+                currentState=1;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_2))
+                currentState=2;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_3))
+                currentState=3;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_4))
+                currentState=4;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_5))
+                currentState=5;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_6))
+                currentState=6;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_7))
+                currentState=7;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_8))
+                currentState=8;
+            else
+            if(Config.IsPressed(BindingEntry::SAVESTATE_9))
+                currentState=9;
+            else
+            if(Config.IsPressed(BindingEntry::LOAD_SAVESTATE))
+            {
+                std::string file = fileName + std::to_string(currentState) + std::string(".state");
+                LoadState(file);
+            }
+            else
+            if(Config.IsPressed(BindingEntry::SAVE_SAVESTATE))
+            {
+                std::string file= fileName + std::to_string(currentState) + std::string(".state");
+                SaveState(file);
             }
         }
         uint16_t Cycles=CPU.Tick();
 
         if(!Bit(MMU.Read(0xFF00), 5))
         {
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::A), *MMU.GetPointer(0xFF00), 3);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::S), *MMU.GetPointer(0xFF00), 2);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::Z), *MMU.GetPointer(0xFF00), 1);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::X), *MMU.GetPointer(0xFF00), 0);
+            SetBit(!Config.IsPressed(BindingEntry::START), *MMU.GetPointer(0xFF00), 3);
+            SetBit(!Config.IsPressed(BindingEntry::SELECT), *MMU.GetPointer(0xFF00), 2);
+            SetBit(!Config.IsPressed(BindingEntry::B), *MMU.GetPointer(0xFF00), 1);
+            SetBit(!Config.IsPressed(BindingEntry::A), *MMU.GetPointer(0xFF00), 0);
         }
         if(!Bit(MMU.Read(0xFF00), 4))
         {
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::Down), *MMU.GetPointer(0xFF00),3);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::Up), *MMU.GetPointer(0xFF00),2);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::Left), *MMU.GetPointer(0xFF00),1);
-            SetBit(!sf::Keyboard::isKeyPressed(sf::Keyboard::Right), *MMU.GetPointer(0xFF00),0);
+            SetBit(!Config.IsPressed(BindingEntry::DPAD_DOWN), *MMU.GetPointer(0xFF00),3);
+            SetBit(!Config.IsPressed(BindingEntry::DPAD_UP), *MMU.GetPointer(0xFF00),2);
+            SetBit(!Config.IsPressed(BindingEntry::DPAD_LEFT), *MMU.GetPointer(0xFF00),1);
+            SetBit(!Config.IsPressed(BindingEntry::DPAD_RIGHT), *MMU.GetPointer(0xFF00),0);
         }
         for(uint32_t counter=0; counter <Cycles; counter+=4)
         {
@@ -230,4 +317,35 @@ void GameBoy::Run(void)
             TCycles %= 4194304;
         }
     }
+}
+
+
+bool GameBoy::SaveState(const std::string& filename)
+{
+    std::ofstream out;
+    out.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+    if(!out.is_open())
+        return false;
+    Cartridge->SaveState(out);
+    MMU.SaveState(out);
+    CPU.SaveState(out);
+    Time.SaveState(out);
+    APU.SaveState(out);
+    GPU.SaveState(out);
+    return true;
+}
+
+bool GameBoy::LoadState(const std::string& filename)
+{
+    std::ifstream in;
+    in.open(filename.c_str(), std::ifstream::in | std::ifstream::binary);
+    if(!in.is_open())
+        return false;
+    Cartridge->LoadState(in);
+    MMU.LoadState(in);
+    CPU.LoadState(in);
+    Time.LoadState(in);
+    APU.LoadState(in);
+    GPU.LoadState(in);
+    return true;
 }

@@ -21,6 +21,9 @@ public:
 
     void DisableWaveformViewer(void);
 
+    bool SaveState(std::ofstream& out);
+    bool LoadState(std::ifstream& in);
+
     SquareGenerator* channel1;
     SquareGenerator* channel2;
     WaveGenerator* channel3;

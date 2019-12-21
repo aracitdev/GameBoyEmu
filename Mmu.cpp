@@ -155,3 +155,24 @@ uint8_t bootDMG[256] = {
         }
         return 0;
     }
+
+
+    bool Mmu::SaveState(std::ofstream& out)
+    {
+        out.write((const char*)InternalRam, MemoryMap::IntRam0Size);
+        out.write((const char*)HardwareRegisters, MemoryMap::HardwareRegsSize);
+        out.write((const char*)Zero, 0xFFFF - 0xFF80);
+        out.write((const char*)Unusable, 0xFEFF-0xFEA0);
+        out.write((const char*)(&DivWritten), sizeof(DivWritten));
+        return true;
+    }
+
+    bool Mmu::LoadState(std::ifstream& in)
+    {
+        in.read((char*)InternalRam, MemoryMap::IntRam0Size);
+        in.read((char*)HardwareRegisters, MemoryMap::HardwareRegsSize);
+        in.read((char*)Zero, 0xFFFF - 0xFF80);
+        in.read((char*)Unusable, 0xFEFF - 0xFEA0);
+        in.read((char*)(&DivWritten), sizeof(DivWritten));
+        return true;
+    }

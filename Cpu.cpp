@@ -280,3 +280,27 @@ void Cpu::RequestInterrupt(InterruptTypes I)
 {
     SetBit(true, *IntterruptFlag, uint8_t(I));
 }
+
+
+bool Cpu::SaveState(std::ofstream& out)
+{
+    out.write((const char*)(&AF), sizeof(AF));
+    out.write((const char*)(&BC), sizeof(BC));
+    out.write((const char*)(&DE), sizeof(DE));
+    out.write((const char*)(&HL), sizeof(HL));
+    out.write((const char*)(&PC), sizeof(PC));
+    out.write((const char*)(&SP), sizeof(SP));
+    return true;
+}
+
+bool Cpu::LoadState(std::ifstream& in)
+{
+    in.read((char*)(&AF), sizeof(AF));
+    in.read((char*)(&BC), sizeof(BC));
+    in.read((char*)(&DE), sizeof(DE));
+    in.read((char*)(&HL), sizeof(HL));
+    in.read((char*)(&PC), sizeof(PC));
+    in.read((char*)(&SP), sizeof(SP));
+    return true;
+}
+
