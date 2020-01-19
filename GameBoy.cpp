@@ -46,7 +46,7 @@ bool GameBoy::Init(uint8_t* RomData, size_t Size,sf::RenderWindow& W, const std:
     Config.LoadConfig("config.xml");
     StartWithBootDMG(Config.RunBootrom);
     APU.Init(&MMU);
-    ProgramDebugger.Enable(&CPU, &MMU, Cartridge);
+    ProgramDebugger.Enable(&CPU, &MMU, Cartridge, &Time);
     Debug.Log("Init Done.", DebugLog::Info, "GameBoy.h");
     Window=&W;
     GameView=new sf::View(sf::FloatRect(0,0,160,144));
@@ -305,8 +305,8 @@ void GameBoy::Run(void)
             Time.Tick(4);   //per cycle perfect ticking test
             GPU.Tick(4);
         }
-        APU.Tick(4);    //nothing that should be cycle perfect in the APU
-        ProgramDebugger.Tick();
+        APU.Tick(Cycles);    //nothing that should be cycle perfect in the APU
+        ProgramDebugger.Tick(Cycles);
         if(ProgramDebugger.StepEnabled)
             GPU.DumpCharMemoryAsImage("Char.bmp");
         TCycles+=Cycles;

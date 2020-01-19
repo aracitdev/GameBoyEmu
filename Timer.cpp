@@ -5,7 +5,7 @@ void Timer::Init(Mmu* MMu)
     MMU=MMu;
     GlobalTimerValue=0;
     MMU->HardwareRegisters[0x04]=0;
-    MMU->HardwareRegisters[0x05]=0;
+    MMU->HardwareRegisters[0x05]=0; //TIMA reset
     std::cout <<"Init with " <<GlobalTimerValue<<" "<<(uint16_t)(MMU->HardwareRegisters[0x04])<<"\n";
     LastTimeConfig=MMU->HardwareRegisters[0x07];
     ShouldTimaReset=false;
@@ -18,8 +18,9 @@ void Timer::Init(Mmu* MMu)
     Debug.Log(ss.str().c_str(), DebugLog::Debug, "Timer.h");
 }
 
-void Timer::HandleLockedTimer(uint32_t Cycles)
+void Timer::Tick(uint32_t Cycles)
 {
+
     uint32_t LastGlobal = GlobalTimerValue; //are last global timer before we add cycles
     if(ShouldTimaReset)
     {
@@ -27,13 +28,15 @@ void Timer::HandleLockedTimer(uint32_t Cycles)
         SetBit(true, MMU->HardwareRegisters[0x0F], 2);
         ShouldTimaReset=false;
     }
-    GlobalTimerValue+=Cycles;   //tick for cycles
     if(MMU->DivWritten)   //was div set?
     {
         GlobalTimerValue=0;             //reset the global clock value
         MMU->HardwareRegisters[0x04]=0;
-        MMU->DivWritten=false;
+        MMU->DivWritten=false; //NOTE: There was a bug here, when resetting the div register
+                               //the number of clocks from instruction to reset it should be added
     }
+
+    GlobalTimerValue+=Cycles;   //tick for cycles
     GlobalTimerValue= GlobalTimerValue % 0xFF00;
     MMU->HardwareRegisters[0x04] = (GlobalTimerValue & 0xFF00)>>8;   //div is equal to the upper 8 bits of the cycles 16
     uint8_t TimeConfig=MMU->HardwareRegisters[0x07];    //the current time configuration
@@ -59,15 +62,9 @@ void Timer::HandleLockedTimer(uint32_t Cycles)
     LastTimeConfig = TimeConfig;
 }
 
-void Timer::HandleTIMA(uint32_t Cycles)
+uint16_t Timer::GetClocks(void)
 {
-    //check the time config for the variable cycle timer
-}
-
-void Timer::Tick(uint32_t Cycles)
-{
-    HandleLockedTimer(Cycles);
-    HandleTIMA(Cycles);
+    return (GlobalTimerValue);
 }
 
 

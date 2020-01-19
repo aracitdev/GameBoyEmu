@@ -193,6 +193,11 @@ std::string ToString(Destination destination);
  */
 std::string GetTitle(uint8_t* rom);
 
+
+bool ContainsRTC(uint8_t RomTypeByte);
+
+bool HasBatteryBackup(uint8_t RomTypeByte);
+
 /**
  * \class CartHeader
  * A class to represent the gameboy cart header.
@@ -222,6 +227,9 @@ public:
 
     bool CBG;           /**<Color game boy flag*/
     bool SGB;           /**<The super game boy flag*/
+    bool HasRTC;       /**<Whether or not the cartridge has RTC*/
+    bool HasBattery;    /**<Whether or not the cartridge has a battery backup*/
+
 
     std::string Title;  /**<The title of the rom*/
     uint8_t Version;    /**<The version byte of the cartridge*/

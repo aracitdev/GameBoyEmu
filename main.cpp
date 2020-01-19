@@ -62,6 +62,26 @@ int main()
         return 0;
     }
     GB.Cartridge->Head.Dump(std::cout);
+    if(GB.Cartridge->ContainsSRAM())
+    {
+        std::ifstream file;
+        file.open((filename + std::string(".sav")).c_str(), std::ifstream::in | std::ifstream::binary);
+        if(!file.is_open())
+            GB.Cartridge->LoadRam(file);
+        file.close();
+    }
     GB.Run();
+
+    if(GB.Cartridge->ContainsSRAM())
+    {
+        //save the SRAM
+        std::ofstream file;
+        file.open((filename + std::string(".sav")).c_str(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+        if(file.is_open())
+            GB.Cartridge->SaveRam(file);
+        else
+            std::cout <<"Failed to open " <<filename <<".sav for saving SRAM\n";
+        file.close();
+    }
     return 0;
 }

@@ -214,7 +214,6 @@ Refference* Cpu::ResolveValue(OperandTypes Type, OperandMem Mem)
 
 uint16_t Cpu::Tick(void)
 {
-    //std::cout <<"Tick.\n";
     uint16_t ReturnV=0;
     *CpuFlags = *CpuFlags & 0xF0;
     HandleInterrupts();

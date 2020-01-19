@@ -1,5 +1,3 @@
-#ifndef BITFUNCTIONS_H_INCLUDED
-#define BITFUNCTIONS_H_INCLUDED
 /**
  * \file BitFunctions.h
  * \author Sean C
@@ -7,6 +5,8 @@
  * Provides functions for bit manipulation.
  */
 
+#ifndef BITFUNCTIONS_H_INCLUDED
+#define BITFUNCTIONS_H_INCLUDED
 #include <cstdint>
 
 #define KB(x) x*1024

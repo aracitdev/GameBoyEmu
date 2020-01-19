@@ -228,6 +228,8 @@ std::string GetTitle(uint8_t* rom)
         Type=GetType(RomBytes[HeaderLocations::CartridgeTypePos]);
         ROM=GetRomSizeCode(RomBytes[HeaderLocations::RomSizePos]);
         RAM=GetRamSizeCode(RomBytes[HeaderLocations::RamSizePos]);
+        HasRTC=ContainsRTC(RomBytes[HeaderLocations::CartridgeTypePos]);
+        HasBattery=HasBatteryBackup(RomBytes[HeaderLocations::CartridgeTypePos]);
         Title=GetTitle(RomBytes);
     }
 
@@ -237,4 +239,45 @@ std::string GetTitle(uint8_t* rom)
         out << ToString(Type) <<"\n";
         out << Title          <<"\n";
         out << ToString(RAM)<<"\n";
+    }
+
+
+    bool HasBatteryBackup(uint8_t RomTypeByte)
+    {
+        switch(RomTypeByte)
+        {
+        case 0x03:
+        case 0x06:
+        case 0x09:
+        case 0x0D:
+        case 0x0F:
+        case 0x10:
+        case 0x13:
+        case 0x17:
+        case 0x1B:
+        case 0x1E:
+        case 0x22:
+        case 0xFD:
+        case 0xFF:
+            return true;
+            break;
+        default:
+            return false;
+            break;
+        }
+    }
+
+
+    bool ContainsRTC(uint8_t RomTypeByte)
+    {
+        switch(RomTypeByte)
+        {
+        case 0x0F:
+        case 0x10:
+            return true;
+            break;
+        default:
+        return false;
+            break;
+        }
     }

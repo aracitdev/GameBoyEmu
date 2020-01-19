@@ -29,9 +29,26 @@ bool Cart::LoadState(std::ifstream& in)
 Cart::~Cart()
 {
     if(Ram)
+    {
         delete[] Ram;
+    }
     Ram=nullptr;
     if(Rom)
         delete[] Rom;
     Rom=nullptr;
+}
+
+void Cart::SaveRam(std::ofstream& out)
+{
+    out.write((const char*)Ram, RamSize);
+}
+
+void Cart::LoadRam(std::ifstream& in)
+{
+    in.read((char*)Ram, RamSize);
+}
+
+bool Cart::ContainsSRAM(void)
+{
+    return Ram != nullptr;
 }

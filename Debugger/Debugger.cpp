@@ -34,8 +34,9 @@ bool Debugger::IsAddress(std::vector<Breakpoint>& Addressses)
     return false;
 }
 
-void Debugger::Tick(void)
+void Debugger::Tick(uint32_t ticks)
 {
+    TotalCycles+=ticks;
     if(!Enabled)
         return;
     if(IsAddress(BreakPoints))
@@ -64,6 +65,9 @@ void Debugger::OnBreak(void)
     else
         Inverse(OpCodes[CPU->OpCode], ss);
     ss<<"\n";
+    ss << "DIV " <<(uint32_t)MMU->HardwareRegisters[0x04] <<" TIMA " <<(uint32_t)MMU->HardwareRegisters[0x05]<<"\n";
+    ss << "Clocks " <<std::bitset<16>(Time->GetClocks())<<"\n";
+    ss << "Total cycles " <<TotalCycles<<"\n";
     CPU->DumpRegisters(ss);
     Debug.Log(ss.str().c_str(), DebugLog::Debug, "Debugger.h");
     system("pause");
@@ -89,7 +93,7 @@ void Debugger::PrintPC(void)
     Debug.Log(ss.str().c_str(), DebugLog::Info, "Debugger.h");
 }
 
-void Debugger::Enable(Cpu* C, Mmu* M, Cart* Crt)
+void Debugger::Enable(Cpu* C, Mmu* M, Cart* Crt, Timer* T)
 {
     CPU=C;
     MMU=M;
@@ -97,6 +101,7 @@ void Debugger::Enable(Cpu* C, Mmu* M, Cart* Crt)
     CrashCPU=CPU;
     CrashMMU=MMU;
     CrashCART=Cartridge;
+    Time=T;
     std::set_terminate(OnTerminate);
 
     Enabled=true;

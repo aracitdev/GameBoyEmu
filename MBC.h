@@ -8,6 +8,7 @@
 #ifndef MBC_H_INCLUDED
 #define MBC_H_INCLUDED
 #include <sstream>
+#include <time.h>
 #include "Cart.h"
 #include "DebugLog.h"
 
@@ -60,6 +61,30 @@ public:
 
     uint8_t Lower=1;
     uint8_t Upper=0;
+
+    struct RTCData
+    {
+        uint32_t Seconds;
+        uint32_t Minutes;
+        uint32_t Hours;
+        uint32_t Days;
+
+        uint32_t LatchSeconds;
+        uint32_t LatchMinutes;
+        uint32_t LatchHours;
+        uint32_t LatchDays;
+
+        uint8_t Control;
+        uint8_t LatchControl;
+    };
+
+    time_t lastUpdate;
+    uint8_t RTCRegister;
+    bool RTCRead;
+    RTCData RTC;
+
+    void UpdateRTC(void);
+    void LatchRTC(void);
 };
 
 

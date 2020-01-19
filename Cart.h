@@ -16,6 +16,11 @@ public:
 
     static uint8_t CartRead(uint16_t Address, void* P);
     static void CartWrite(uint16_t Address, uint8_t Value, void* P);
+
+    bool ContainsSRAM(void);
+
+    virtual void SaveRam(std::ofstream& out);
+    virtual void LoadRam(std::ifstream& in);
     uint8_t* Rom;
     size_t RomSize;
     uint8_t* Ram;

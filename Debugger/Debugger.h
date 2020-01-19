@@ -4,10 +4,11 @@
 #include <exception>
 #include <signal.h>
 #include <sstream>
+#include <bitset>
 #include "../Cpu.h"
 #include "../Mmu.h"
 #include "../Cart.h"
-
+#include "../Timer.h"
 
 extern Cpu* CrashCPU;
 extern Mmu* CrashMMU;
@@ -21,24 +22,27 @@ public:
 
     bool IsAddress(std::vector<Breakpoint>& Addressses);
 
-    void Tick(void);
+    void Tick(uint32_t ticks);
 
     void OnBreak(void);
 
     void PrintPC(void);
 
-    void Enable(Cpu* C, Mmu* M, Cart* Crt);
+    void Enable(Cpu* C, Mmu* M, Cart* Crt, Timer* T);
 
     bool StepEnabled=false;
     bool PrintLine=false;
     std::vector<Breakpoint> BreakPoints;
     std::vector<Breakpoint> EnableStepMode;
     std::vector<Breakpoint> DisableStepMode;
+
+    uint64_t TotalCycles=0;
 private:
     bool Enabled=false;
     Cpu* CPU;
     Mmu* MMU;
     Cart* Cartridge;
+    Timer* Time;
 };
 
 

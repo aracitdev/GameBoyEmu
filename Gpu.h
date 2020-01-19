@@ -1,3 +1,10 @@
+/**
+ * \file Gpu.h
+ * \author Sean C
+ * \version 1.0
+ * Defines the implementation of the gpu emulation.
+ */
+
 #ifndef GPU_H_INCLUDED
 #define GPU_H_INCLUDED
 #include <fstream>
@@ -25,6 +32,10 @@ extern const char* ColorStrings[];
 extern const sf::Color ColorSet[];
 
 
+/**
+ * \enum Color
+ * Enumeration for the different possible colors for gameboys.
+ */
 enum class Color
 {
     White,
@@ -35,6 +46,10 @@ enum class Color
 
 extern const char* ColorStrings[4];
 
+/**
+ * \enum VideoMode
+ * Enumeration for the different current video modes
+ */
 enum class VideoMode
 {
     ACCESS_OAM,
@@ -49,6 +64,11 @@ extern const sf::Color ColorSet[5];
 
 class Mmu;
 
+
+/**
+ * \class Gpu
+ * Defines the implementation for the gpu and image emulation
+ */
 class Gpu
 {
 public:

@@ -250,11 +250,10 @@ void Gpu::DoDMATransfer(void)
 {
     if(DmaTransferStarted)
     {
-        for(uint32_t counter=0; counter < (0x9F); counter++)
+        for(uint32_t counter=0; counter <= (0x9F); counter++)
         {
             MMU->Write(0xFE00 + counter, MMU->Read(0x100 * MMU->HardwareRegisters[0x46] + counter));
         }
-        MMU->HardwareRegisters[0x46]=0;
         DmaTransferStarted=false;
     }
 }

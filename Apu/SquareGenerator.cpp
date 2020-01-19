@@ -49,9 +49,9 @@ bool SquareGenerator::onGetData(Chunk& data)
     if(!enabled || Period == 0 || !Bit(*GlobalAudio,7))    //we aren't enabled, so just return some garbage
     {
         data.samples =&sampleReturn[0];     //output a completely zero waveform
-        for(uint32_t i=0; i<1000; i++)
+        for(uint32_t i=0; i<sampleReturn.size()/4; i++)
             sampleReturn[i]=0;
-        data.sampleCount = 1000;
+        data.sampleCount = sampleReturn.size()/4;
         if(viewer)
             viewer->AddVertexes(0, 1);
         return true;

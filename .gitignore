@@ -6,3 +6,8 @@
 *.cbp
 *.depend
 *.state
+*.gb
+*.bmp
+*.layout
+*.txt
+*.csv

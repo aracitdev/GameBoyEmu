@@ -24,7 +24,7 @@ LFLAGS = -L../lib
 LIBS = -lsfml-system -lsfml-audio -lsfml-window -lsfml-graphics -ltinyxml2
 
 # define the C source files
-SRCS = Apu.cpp BitFunctions.cpp Cart.cpp CartHeader.cpp ConfigLoader.cpp Cpu.cpp DebugLog.cpp GameBoy.cpp Gpu.cpp main.cpp MBC.cpp Mmu.cpp OpFuncs.cpp Refference.cpp RomOnly.cpp TableGenerator.cpp Timer.cpp Apu/SquareGenerator.cpp Apu/WaveGenerator.cpp Debugger/Debugger.cpp Instruction/Arithmetic.cpp Instruction/Control.cpp Instruction/Memory.cpp Instruction/OpCodeTable.cpp Video/Pallete.cpp Video/Tile.cpp
+SRCS = Apu.cpp BitFunctions.cpp Cart.cpp CartHeader.cpp ConfigLoader.cpp Cpu.cpp DebugLog.cpp GameBoy.cpp Gpu.cpp main.cpp MBC.cpp Mmu.cpp OpFuncs.cpp Refference.cpp RomOnly.cpp TableGenerator.cpp Timer.cpp Apu/SquareGenerator.cpp Apu/WaveGenerator.cpp Debugger/Debugger.cpp Debugger/Breakpoint.cpp Instruction/Arithmetic.cpp Instruction/Control.cpp Instruction/Memory.cpp Instruction/OpCodeTable.cpp Video/Pallete.cpp Video/Tile.cpp
 
 # define the C object files
 #
