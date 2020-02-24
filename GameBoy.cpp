@@ -167,7 +167,7 @@ void GameBoy::Run(void)
     sf::Clock Sync;
     uint32_t TCycles=0;
     //PNS = GB.MMU.GetPointer(0xFF11);   //sweep period, negate, shift -PPP NSSS
-
+    Debug.Log("Running Main Loop.", DebugLog::Debug, "GameBoy.cpp");
     while(1)
     {
         sf::Event ev;

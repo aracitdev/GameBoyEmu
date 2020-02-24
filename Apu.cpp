@@ -67,6 +67,8 @@ void Apu::Init(Mmu* in)
     channel3->play();
     channel2->play();
     channel1->play();
+    Debug.Log("Audio channels set up.", DebugLog::Debug, "Apu.cpp");
+    sf::sleep(sf::seconds(1));
 }
 
 void Apu::Tick(uint16_t AddedCycles)
@@ -74,6 +76,7 @@ void Apu::Tick(uint16_t AddedCycles)
     channel1Clocks+=AddedCycles;
     channel2Clocks+=AddedCycles;
     channel3Clocks+=AddedCycles;
+    /*
     clocksSinceUpdate+=AddedCycles;
     if(waveformViewerWindow && updateFrequency < clocksSinceUpdate)
     {
@@ -88,7 +91,7 @@ void Apu::Tick(uint16_t AddedCycles)
         //    waveformViewerWindow->draw(*channel3View);
         waveformViewerWindow->display();
         clocksSinceUpdate=0;
-    }
+    }*/
 }
 
 void Apu::EnableWaveformViewer(uint32_t SizeX, uint32_t SizeY, uint32_t Resolution, uint32_t samplesPerVertex, uint32_t updateFreqClocks)

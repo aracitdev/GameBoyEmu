@@ -12,6 +12,8 @@ namespace Tile
     Color GetPixel(uint8_t counterx, uint8_t countery,uint8_t* PalleteBytes, Palette& P);
 
 
+    uint8_t GetTileData(uint8_t counterx, uint8_t countery, uint8_t* PalleteBytes);
+
 };
 
 #endif // TILE_H_INCLUDED

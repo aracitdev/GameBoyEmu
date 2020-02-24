@@ -14,7 +14,7 @@ const uint16_t BgScreenX=32*8;
 const uint16_t BgScreenY=32*8;
 
 const char* ColorStrings[4]={"White","LightGray","DarkGray","Black"};
-const sf::Color ColorSet[5]={sf::Color(0x01,0x01,0x01,0x00), sf::Color(0x80, 0x80, 0x80), sf::Color(0x60,0x60,0x60), sf::Color(0,0,0), sf::Color(1,1,1,0)};
+const sf::Color ColorSet[5]={sf::Color(0xFF,0xFF,0xFF), sf::Color(0x80, 0x80, 0x80), sf::Color(0x60,0x60,0x60), sf::Color(0,0,0), sf::Color(1,1,1,0)};
 
 
 Gpu::Gpu()
@@ -80,8 +80,8 @@ void Gpu::DrawScanline(void)
     uint8_t TilePixelY=0;
     uint8_t TileNumber=0;
     uint8_t SpriteSize= Bit(MMU->Read(0xFF40), 2);
-    uint8_t SpriteTileX=8;
-    uint8_t SpriteTileY = SpriteSize ? 16 :8;
+    uint8_t SpriteTileX=8-1;
+    uint8_t SpriteTileY = SpriteSize ? 16-1 :8-1;
     uint8_t TileColor=0;
     Palette SpritePallete;
     SpritePallete.Load(Bit(OEM[3], 4) ? MMU->HardwareRegisters[0x48] : MMU->HardwareRegisters[0x49]);
@@ -121,21 +121,25 @@ void Gpu::DrawScanline(void)
         for(uint32_t countersprite=0; countersprite <40; countersprite++)
         {
             uint8_t* OemPos=OEM + 0x04 * countersprite;
+            SpritePallete.Load(Bit(OemPos[3], 4) ? MMU->HardwareRegisters[0x48] : MMU->HardwareRegisters[0x49]);
             uint8_t SpritePriority=Bit(OemPos[3],7);
-            uint8_t ScreenPosX = OemPos[1] - 8;
-            uint8_t ScreenPosY = OemPos[0] - 16;
+            int16_t ScreenPosX = OemPos[1] - 8;
+            int16_t ScreenPosY = OemPos[0] - 16;
             if((!TileColor || !SpritePriority) &&
-               ScreenPosY <= CurrentScanline && ScreenPosY  + SpriteTileY  >= CurrentScanline&&
-               ScreenPosX <= counterx && ScreenPosX + SpriteTileX >= counterx)
+               ScreenPosY <= CurrentScanline && ScreenPosY  + SpriteTileY  >= CurrentScanline &&
+               ScreenPosX <= (int32_t)counterx && ScreenPosX + SpriteTileX >= (int32_t) counterx )
             {
                 uint8_t PixelX = Bit(OemPos[3], 5) ? SpriteTileX - (counterx - ScreenPosX) : counterx - ScreenPosX;
                 uint8_t PixelY = Bit(OemPos[3], 6) ? SpriteTileY - (CurrentScanline - ScreenPosY) : CurrentScanline - ScreenPosY;
                 uint8_t TileNumber= PixelY >=8 ? OemPos[2] | 0x01: OemPos[2] & 0xFE;
                 PixelY %=8;
                 uint8_t* TileData=GetCharMemory(TileNumber, true);
-                uint8_t TileColor = (uint8_t)Tile::GetPixel(PixelX, PixelY, TileData, SpritePallete);
-                if(TileColor)
+                uint8_t TileValue = Tile::GetTileData(PixelX, PixelY, TileData);
+                if(TileValue)
+                {
+                    Color TileColor = SpritePallete.GetColor(TileValue);
                     Image.setPixel(counterx, CurrentScanline,ColorSet[(uint16_t)TileColor]);
+                }
             }
 
         }

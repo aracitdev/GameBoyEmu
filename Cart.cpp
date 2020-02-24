@@ -50,5 +50,5 @@ void Cart::LoadRam(std::ifstream& in)
 
 bool Cart::ContainsSRAM(void)
 {
-    return Ram != nullptr;
+    return Head.HasBattery;
 }

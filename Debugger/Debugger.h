@@ -9,6 +9,7 @@
 #include "../Mmu.h"
 #include "../Cart.h"
 #include "../Timer.h"
+#include "PalleteWindow.h"
 
 extern Cpu* CrashCPU;
 extern Mmu* CrashMMU;
@@ -35,6 +36,7 @@ public:
     std::vector<Breakpoint> BreakPoints;
     std::vector<Breakpoint> EnableStepMode;
     std::vector<Breakpoint> DisableStepMode;
+    PalleteWindow PWindow;
 
     uint64_t TotalCycles=0;
 private:

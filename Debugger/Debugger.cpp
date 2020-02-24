@@ -39,6 +39,7 @@ void Debugger::Tick(uint32_t ticks)
     TotalCycles+=ticks;
     if(!Enabled)
         return;
+    PWindow.Update();
     if(IsAddress(BreakPoints))
         OnBreak();
     if(IsAddress(EnableStepMode))
@@ -103,6 +104,7 @@ void Debugger::Enable(Cpu* C, Mmu* M, Cart* Crt, Timer* T)
     CrashCART=Cartridge;
     Time=T;
     std::set_terminate(OnTerminate);
-
+    PWindow.Init(M);
+    PWindow.SetEnabled(true);
     Enabled=true;
 }
