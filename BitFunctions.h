@@ -20,8 +20,8 @@
  * \return The value of the bit, 1 for true, 0 for false.
  * Gets a bit from a number and returns its value.
  */
-template <class T>
-uint8_t Bit(T Byte, uint8_t Bit);
+//template <class T>
+//uint8_t Bit(T Byte, uint8_t Bit);
 
 /**
  * uint8_t Pow2(uint8_t v)
@@ -48,7 +48,12 @@ void SetBit(bool Value, uint8_t& Byte, uint8_t BitNumber);
  * returns a number represented by a bitfield between bitstart and end in the byte.
  * \return The number equal to the bit field.
  */
-uint8_t BitField(uint8_t Byte, uint8_t BitStart, uint8_t BitEnd);
+//uint8_t BitField(uint8_t Byte, uint8_t BitStart, uint8_t BitEnd);
+#define Bit(Byte, Bt)   (((Byte) >>(Bt)) & 0x1)
+#define BITF(n)                  ( 1<<(n) )
+#define BitMask(len)           ( BITF(len)-1 )
+#define BitField(y, start, end)   (((y)>>(start)) & BitMask(end - start + 1) )
+
 
 uint8_t Get2Bits(uint8_t Byte, uint8_t Bits);
 #endif // BITFUNCTIONS_H_INCLUDED

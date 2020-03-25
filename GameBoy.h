@@ -46,6 +46,8 @@ public:
     float SpeedMultiplier;
     uint8_t currentState;
     std::string fileName;
+
+    bool CGB;
 private:
 };
 

@@ -26,7 +26,10 @@ Cpu::Cpu(Mmu& m)  : Const(0, &m), Cond(0, &m), DeRef(0, &m), AFRef(AF, &m), BCRe
                   ARef(*A, &m), FRef(*CpuFlags, &m), BRef(*B, &m), CRef(*C, &m), DRef(*D, &m), ERef(*E,&m), HRef(*H, &m),
                   LRef(*L, &m)
 {
-     MMU=&m;
+    MMU=&m;
+    CGBDouble=false;
+    Stopped=false;
+    Halted=false;
 }
 
 void Cpu::SetZeroFlag(bool Value)
@@ -214,10 +217,18 @@ Refference* Cpu::ResolveValue(OperandTypes Type, OperandMem Mem)
 
 uint16_t Cpu::Tick(void)
 {
-    uint16_t ReturnV=0;
+    //uint16_t ReturnV=0;
     *CpuFlags = *CpuFlags & 0xF0;
+    uint8_t FF4D=MMU->Read(0xFF4D);
+    if(Stopped && Bit(FF4D,0)) //swap to/from cgb double speed?
+    {
+        Stopped=false;
+        CGBDouble = !CGBDouble;
+        SetBit(CGBDouble,FF4D,7);
+        MMU->Write(0xFF4D, FF4D);
+    }
     HandleInterrupts();
-    if(!Halted)
+    if(!Halted && !Stopped)
     {
         OpCode=GetByte();
         if(OpCode == 0xCB)
@@ -228,6 +239,8 @@ uint16_t Cpu::Tick(void)
         OpCodeCB=false;
         OpCodeEntry& Op=OpCodes[OpCode];
         bool ReturnV=OperationList[(uint8_t)Op.Operation](this, &Op);
+        if(CGBDouble)
+            return ReturnV ? Op.BranchedCycles / 2 : Op.Cycles / 2;
         return  ReturnV ? Op.BranchedCycles : Op.Cycles;
     }
     return 4;
@@ -250,6 +263,7 @@ void Cpu::HandleInterrupts(void)
     if(!Interrupt)  //if an interrupt has not been requested thats enabled
         return;     //we return
     Halted=false;
+    Stopped=false;
     if(!IEnabled)
         return;
     for(uint8_t counter=0; counter<5; counter++)

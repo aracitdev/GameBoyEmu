@@ -160,6 +160,9 @@ public:
  */
     bool LoadState(std::ifstream& in);
 
+
+    void ReloadPalettes(void);
+
     std::array<Color, 8> GetTileScanline(uint8_t Scanline, uint8_t TileNumber);
 
     void DumpCharMemory(std::ostream& out);
@@ -193,6 +196,11 @@ public:
     bool DmaTransferStarted; /**<Whether or not a DMA transfer is queued*/
     uint8_t FrameSkip=2; /**<The frames to skip between updates of the screen*/
     uint8_t CurrentFrame=0; /**<The current number of frames skipped since the last draw*/
+
+
+    Palette SpritePallete1;
+    Palette SpritePallete2;
+    Palette BGPallete;
 private:
 };
 

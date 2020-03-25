@@ -19,6 +19,7 @@ bool GameBoy::Init(uint8_t* RomData, size_t Size,sf::RenderWindow& W, const std:
     fileName=filenm;
     CartHeader Head;
     Head.Create(RomData);
+    CGB = Head.CBG;
     switch(Head.Type)
     {
     case CartridgeType::ROMOnly:
@@ -88,77 +89,116 @@ void GameBoy::UpdateSpeed(void)
     GPU.Window->setFramerateLimit(60 / (GPU.FrameSkip + 1) / SpeedMultiplier);
 }
 
+
+std::pair<uint16_t,uint8_t> DMGStartValues[]=
+{
+   {0x00,0x01}, //A
+   {0x00,0xB0}, //F
+   {0x00,0x00}, //B
+   {0x00,0x13}, //C
+   {0x00,0x00}, //D
+   {0x00,0xD8}, //E
+   {0x00,0x01}, //H
+   {0x00,0x4D}, //L
+   {0x00,0xFE}, //SP (0xFF + V)
+   {0xFF05,0x00},   // TIMA
+   {0xFF06,0x00},   // TMA
+   {0xFF07,0x00},   // TAC
+   {0xFF10,0x80},   // NR10
+   {0xFF11,0xBF},   // NR11
+   {0xFF12,0xF3},   // NR12
+   {0xFF14,0xBF},   // NR14
+   {0xFF16,0x3F},   // NR21
+   {0xFF17,0x00},   // NR22
+   {0xFF19,0xBF},   // NR24
+   {0xFF1A,0x7F},   // NR30
+   {0xFF1B,0xFF},   // NR31
+   {0xFF1C,0x9F},   // NR32
+   {0xFF1E,0xBF},   // NR33
+   {0xFF20,0xFF},   // NR41
+   {0xFF21,0x00},   // NR42
+   {0xFF22,0x00},   // NR43
+   {0xFF23,0xBF},   // NR30
+   {0xFF24,0x77},   // NR50
+   {0xFF25,0xF3},   // NR51
+   {0xFF26,0xF1},// $F0-SGB ; NR52
+   {0xFF40,0x91},   // LCDC
+   {0xFF42,0x00},   // SCY
+   {0xFF43,0x00},   // SCX
+   {0xFF45,0x00},   // LYC
+   {0xFF47,0xFC},   // BGP
+   {0xFF48,0xFF},   // OBP0
+   {0xFF49,0xFF},   // OBP1
+   {0xFF4A,0x00},   // WY
+   {0xFF4B,0x00},   // WX
+   {0xFFFF,0x00}   // IE
+};
+
+std::pair<uint16_t,uint8_t> CGBStartValues[]=
+{
+   {0x00,0xFF}, //A (Identifies as CGB)
+   {0x00,0xB0}, //F
+   {0x00,0x00}, //B
+   {0x00,0x13}, //C
+   {0x00,0x00}, //D
+   {0x00,0xD8}, //E
+   {0x00,0x01}, //H
+   {0x00,0x4D}, //L
+   {0x00,0xFE}, //SP (0xFF + V)
+   {0xFF05,0x00},   // TIMA
+   {0xFF06,0x00},   // TMA
+   {0xFF07,0x00},   // TAC
+   {0xFF10,0x80},   // NR10
+   {0xFF11,0xBF},   // NR11
+   {0xFF12,0xF3},   // NR12
+   {0xFF14,0xBF},   // NR14
+   {0xFF16,0x3F},   // NR21
+   {0xFF17,0x00},   // NR22
+   {0xFF19,0xBF},   // NR24
+   {0xFF1A,0x7F},   // NR30
+   {0xFF1B,0xFF},   // NR31
+   {0xFF1C,0x9F},   // NR32
+   {0xFF1E,0xBF},   // NR33
+   {0xFF20,0xFF},   // NR41
+   {0xFF21,0x00},   // NR42
+   {0xFF22,0x00},   // NR43
+   {0xFF23,0xBF},   // NR30
+   {0xFF24,0x77},   // NR50
+   {0xFF25,0xF3},   // NR51
+   {0xFF26,0xF1},// $F0-SGB ; NR52
+   {0xFF40,0x91},   // LCDC
+   {0xFF42,0x00},   // SCY
+   {0xFF43,0x00},   // SCX
+   {0xFF45,0x00},   // LYC
+   {0xFF47,0xFC},   // BGP
+   {0xFF48,0xFF},   // OBP0
+   {0xFF49,0xFF},   // OBP1
+   {0xFF4A,0x00},   // WY
+   {0xFF4B,0x00},   // WX
+   {0xFFFF,0x00}   // IE
+};
+
 void GameBoy::StartWithBootDMG(bool enabled) //TODO: This is a really bad way of doing this alltogether
 {
-    *(MMU.BootRomEnabled) = enabled ? 0x00 : 0x01;
-    CPU.AF = enabled ? 0x0000 : 0x01B0;
-    CPU.BC = enabled ? 0x0000 : 0x0013;
-    CPU.DE = enabled ? 0x0000 : 0x00D8;
-    CPU.HL = enabled ? 0x0000 : 0x014D;
-    CPU.SP = enabled ? 0x0000 : 0xFFFE;
     CPU.PC = enabled ? 0x0000 : 0x0100;
-    *(GPU.LCDC) = enabled ? 0x00 : 0x91;
-    *(GPU.LcdStatusRegister) = enabled ? 0x00 : 0x85;
-    (GPU.CurrentScanline) = enabled ? 0x00: 90;
-    MMU.Write(0xFF05,00); //TIMA
-    MMU.Write(0xFF06,00); //TMA
-    MMU.Write(0xFF07,00); //TAC
-    MMU.Write(0xFF42,00); //SCY
-    MMU.Write(0xFF43,00); //SCX
-    MMU.Write(0xFF47,enabled ? 0x00 : 0xFC); //BGP
-    MMU.Write(0xFF48,enabled ? 0x00 : 0xFF); //OBP0
-    MMU.Write(0xFF49,enabled ? 0x00 : 0xFF); //OBP1
-    MMU.Write(0xFF4A,0x00); //WY
-    MMU.Write(0xFF4B,0x00); //WX
-    MMU.Write(0xFFFF,0x00); //IE
-    MMU.Write(0xFF0F,0x00); //
-    MMU.Write(0xFF10, 0x80);
-    MMU.Write(0xFF11, 0xBF);
-    MMU.Write(0xFF12,0xF3);
-    MMU.Write(0xFF14,0xBF);
-    MMU.Write(0xFF14,0xBF);
-    MMU.Write(0xFF16,0x3F);
-    MMU.Write(0xFF17,0x00);
-    MMU.Write(0xFF19,0xBF);
-    MMU.Write(0xFF1A,0x7E);
-    MMU.Write(0xFF1B,0xFF);
-    MMU.Write(0xFF1C,0x9F);
-    MMU.Write(0xFF1E,0xBF);
-    MMU.Write(0xFF20,0xFF);
-    MMU.Write(0xFF21,0x00);
-    MMU.Write(0xFF22,0x00);
-    MMU.Write(0xFF23,0xBF);
-    /*[$FF05] = $00   ; TIMA
-    [$FF06] = $00   ; TMA
-    [$FF07] = $00   ; TAC
-    [$FF10] = $80   ; NR10
-    [$FF11] = $BF   ; NR11
-    [$FF12] = $F3   ; NR12
-    [$FF14] = $BF   ; NR14
-    [$FF16] = $3F   ; NR21
-    [$FF17] = $00   ; NR22
-    [$FF19] = $BF   ; NR24
-    [$FF1A] = $7F   ; NR30
-    [$FF1B] = $FF   ; NR31
-    [$FF1C] = $9F   ; NR32
-    [$FF1E] = $BF   ; NR33
-    [$FF20] = $FF   ; NR41
-    [$FF21] = $00   ; NR42
-    [$FF22] = $00   ; NR43
-    [$FF23] = $BF   ; NR30
-    [$FF24] = $77   ; NR50
-    [$FF25] = $F3   ; NR51
-    [$FF26] = $F1-GB, $F0-SGB ; NR52
-    [$FF40] = $91   ; LCDC
-    [$FF42] = $00   ; SCY
-    [$FF43] = $00   ; SCX
-    [$FF45] = $00   ; LYC
-    [$FF47] = $FC   ; BGP
-    [$FF48] = $FF   ; OBP0
-    [$FF49] = $FF   ; OBP1
-    [$FF4A] = $00   ; WY
-    [$FF4B] = $00   ; WX
-    [$FFFF] = $00   ; IE*/
+    std::pair<uint16_t, uint8_t>* DataSet = CGB ? CGBStartValues : DMGStartValues;
+    size_t Size = CGB ? sizeof(CGBStartValues) / sizeof(CGBStartValues[0]) : sizeof(DMGStartValues) / sizeof(DMGStartValues[0]);
+    *(MMU.BootRomEnabled) = enabled ? 0x00 : 0x01;
+    if(!enabled)
+        return;
+    *CPU.A = DataSet[0].second;
+    *CPU.F = DataSet[1].second;
+    *CPU.B = DataSet[2].second;
+    *CPU.C = DataSet[3].second;
+    *CPU.D = DataSet[4].second;
+    *CPU.E = DataSet[5].second;
+    *CPU.H = DataSet[6].second;
+    *CPU.L = DataSet[7].second;
+    CPU.SP = DataSet[8].second + 0xFF00;
+    for(uint32_t i=9; i < Size; i++)
+    {
+        MMU.Write(DataSet[i].first, DataSet[i].second);
+    }
 }
 
 

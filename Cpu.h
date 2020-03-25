@@ -291,6 +291,9 @@ int8_t GetSignedByte(void);
     uint8_t OpCode; /**<The last opcode byte run, for debugging*/
     bool OpCodeCB;  /**<Whether or not the last opcode was cb or not*/
 
+
+    bool CGBDouble; /**<Whether or not the cgb double mode is active*/
+
 private:
 };
 

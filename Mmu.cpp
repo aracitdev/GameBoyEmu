@@ -51,6 +51,8 @@ uint8_t bootDMG[256] = {
         else
         if(Address >= MemoryMap::HardwareRegsStart && Address <= MemoryMap::HardwareRegsEnd)
         {
+            if(Address > 0xFF47 && Address < 0xFF59)
+                GPU->ReloadPalettes();
             return HardwareRegisters[Address - MemoryMap::HardwareRegsStart];
         }
         else

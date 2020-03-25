@@ -18,7 +18,7 @@ namespace Tile
 
     uint8_t GetTileData(uint8_t counterx, uint8_t countery, uint8_t* PalleteBytes)
     {
-        return (Bit(PalleteBytes[countery * 2], 7-counterx)) << 1 | Bit(PalleteBytes[countery * 2 + 1], 7-counterx);
+        return (Bit(PalleteBytes[countery * 2 + 1], (7-counterx))) << 1 | Bit(PalleteBytes[countery * 2], (7-counterx));
     }
 
 }

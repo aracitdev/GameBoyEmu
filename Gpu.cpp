@@ -65,10 +65,16 @@ uint8_t* Gpu::GetPointer(uint16_t Address)
 }
 
 
+
+void Gpu::ReloadPalettes(void)
+{
+    BGPallete.Load(MMU->HardwareRegisters[0x47]);
+    SpritePallete1.Load(MMU->HardwareRegisters[0x48]);
+    SpritePallete2.Load(MMU->HardwareRegisters[0x49]);
+}
+
 void Gpu::DrawScanline(void)
 {
-    Palette P;
-    P.Load(MMU->HardwareRegisters[0x47]);
     uint16_t AddressOffset= Bit(*LCDC, 3)? (0x9C00 - 0x9800):0;
     uint8_t ScrolledPosX=0;
     uint8_t ScrolledPosY=0;
@@ -83,8 +89,6 @@ void Gpu::DrawScanline(void)
     uint8_t SpriteTileX=8-1;
     uint8_t SpriteTileY = SpriteSize ? 16-1 :8-1;
     uint8_t TileColor=0;
-    Palette SpritePallete;
-    SpritePallete.Load(Bit(OEM[3], 4) ? MMU->HardwareRegisters[0x48] : MMU->HardwareRegisters[0x49]);
     for(uint32_t counterx=0; counterx<GameboyScreenX; counterx++)
     {
         ScrolledPosX=counterx + (*ScrollX);
@@ -96,7 +100,7 @@ void Gpu::DrawScanline(void)
         TilePixelX=BGMapX%8;
         TilePixelY=BGMapY%8;
         TileNumber=BGMap[TileX + 32 * TileY + AddressOffset];
-        TileColor = (uint8_t)Tile::GetPixel(TilePixelX, TilePixelY, GetCharMemory(TileNumber),P);
+        TileColor = (uint8_t)Tile::GetPixel(TilePixelX, TilePixelY, GetCharMemory(TileNumber),BGPallete);
         Image.setPixel(counterx, CurrentScanline, ColorSet[TileColor]);
         if(Bit(*LCDC, 5))   //is the window enabled?
         {
@@ -112,7 +116,7 @@ void Gpu::DrawScanline(void)
                 if(WTileX < 32 && WTileY < 32)
                 {
                     uint8_t WTileNumber = BGMap[WTileX + 32 * WTileY + WindowAddressOffset];
-                    uint8_t WTileColor = (uint8_t)Tile::GetPixel(WTilePixelX, WTilePixelY, GetCharMemory(WTileNumber),P);
+                    uint8_t WTileColor = (uint8_t)Tile::GetPixel(WTilePixelX, WTilePixelY, GetCharMemory(WTileNumber),BGPallete);
                     Image.setPixel(counterx, CurrentScanline, ColorSet[WTileColor]);
                 }
             }
@@ -121,7 +125,7 @@ void Gpu::DrawScanline(void)
         for(uint32_t countersprite=0; countersprite <40; countersprite++)
         {
             uint8_t* OemPos=OEM + 0x04 * countersprite;
-            SpritePallete.Load(Bit(OemPos[3], 4) ? MMU->HardwareRegisters[0x48] : MMU->HardwareRegisters[0x49]);
+            Palette& SpritePallete = Bit(OemPos[3], 4) ?  SpritePallete2 : SpritePallete1;
             uint8_t SpritePriority=Bit(OemPos[3],7);
             int16_t ScreenPosX = OemPos[1] - 8;
             int16_t ScreenPosY = OemPos[0] - 16;

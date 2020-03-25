@@ -38,7 +38,7 @@ int main()
 {
     std::ofstream out;
     out.open("Table.csv", std::ostream::out | std::ostream::trunc);
-    CSVDump(out);
+    //CSVDump(out);
     out.close();
 
     Debug.AddStream(&std::cout);
