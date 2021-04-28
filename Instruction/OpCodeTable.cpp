@@ -33,7 +33,7 @@ OpCodeEntry OpCodes[OpCodeCount]
     {OpTypes::JPR,OperandTypes::ImmediateS8, OperandTypes::None, OperandMem::Const, OperandMem::Const,  12,12}, //0x18 JP s8
     {OpTypes::ADDW, OperandTypes::HL, OperandTypes::DE, OperandMem::Const, OperandMem::Const,            8, 8}, //0x19 ADD HL DE
     {OpTypes::LD, OperandTypes::A, OperandTypes::DE, OperandMem::Const, OperandMem::Indirected,          8, 8}, //0x1A LD A (DE)
-    {OpTypes::DECW, OperandTypes::DE, OperandTypes::None, OperandMem::Const, OperandMem::Const     ,     0, 0}, //0x1B DEC DE
+    {OpTypes::DECW, OperandTypes::DE, OperandTypes::None, OperandMem::Const, OperandMem::Const     ,     8, 8}, //0x1B DEC DE
     {OpTypes::INC, OperandTypes::E, OperandTypes::None, OperandMem::Const, OperandMem::Const ,           4, 4}, //0x1C INC E
     {OpTypes::DEC, OperandTypes::E, OperandTypes::None, OperandMem::Const, OperandMem::Const,            4, 4}, //0x1D DEC E
     {OpTypes::LD, OperandTypes::E, OperandTypes::Immediate8, OperandMem::Const, OperandMem::Const,       8, 8}, //0x1E LD E d8

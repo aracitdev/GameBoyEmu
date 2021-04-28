@@ -9,6 +9,7 @@
 *.gb
 *.bmp
 *.layout
+*.out
 *.txt
 *.csv
 *.sav

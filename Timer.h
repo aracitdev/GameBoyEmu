@@ -63,7 +63,7 @@ private:
     const uint32_t LockedClockCycleHz = 16384;
     const float CPUCyclesToLockedCycles = LockedClockCycleHz / CPUClockCyclesHz;
 
-    uint32_t ClockCycles[4] = {4096, 262144, 65536, 16384};
+    uint32_t ClockCycles[4] = {4096, 262144 , 65536 , 16384};
     uint8_t TimaBit[4]={9,7,3,5};   //the bit to check change for to increase TIMA
     float CPUConversionTable[4];
 
@@ -71,6 +71,9 @@ private:
     uint32_t GlobalTimerValue;  /**<Total clocks on the timer register*/
     uint8_t LastTimeConfig; /**<The last value of the timer configuration register, used to detect if the TimaBit goes from high to low*/
     bool ShouldTimaReset=false;   /**<should TIMA reset to the mod next cycle*/
+
+    uint32_t TimaClocks;    /**<TimaClock*/
+    uint32_t DivClocks;     /**<DivClock*/
 
     Mmu* MMU;
 };

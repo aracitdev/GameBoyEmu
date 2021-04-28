@@ -372,6 +372,8 @@ bool GameBoy::SaveState(const std::string& filename)
     Time.SaveState(out);
     APU.SaveState(out);
     GPU.SaveState(out);
+    std::cout <<"State saved\n";
+    std::cout <<"PC " <<CPU.PC<<"\n";
     return true;
 }
 
@@ -387,5 +389,7 @@ bool GameBoy::LoadState(const std::string& filename)
     Time.LoadState(in);
     APU.LoadState(in);
     GPU.LoadState(in);
+    std::cout <<"State loaded\n";
+    std::cout <<"PC " <<CPU.PC<<"\n";
     return true;
 }
