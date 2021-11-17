@@ -29,6 +29,36 @@ Apu::~Apu()
         delete waveformViewerWindow;
 }
 
+void Apu::Destroy(void)
+{
+    channel1->stop();
+    channel2->stop();
+    channel3->stop();
+    if(channel1)
+        delete channel1;
+    if(channel2)
+        delete channel2;
+    if(channel3)
+        delete channel3;
+    channel1 = nullptr;
+    channel2 = nullptr;
+    channel3 = nullptr;
+}
+
+void Apu::Stop(void)
+{
+    channel1->stop();
+    channel2->stop();
+    channel3->stop();
+}
+
+void Apu::Start(void)
+{
+    channel1->play();
+    channel2->play();
+    channel3->play();
+}
+
 void Apu::Init(Mmu* in)
 {
     MMU=in;
@@ -64,11 +94,11 @@ void Apu::Init(Mmu* in)
     channel3->wavePattern = MMU->GetPointer(0xFF30);
     channel3->clocks = &channel3Clocks;
     channel3->APUVolume = &currentVolume;
+
     channel3->play();
     channel2->play();
     channel1->play();
     Debug.Log("Audio channels set up.", DebugLog::Debug, "Apu.cpp");
-    sf::sleep(sf::seconds(1));
 }
 
 void Apu::Tick(uint16_t AddedCycles)
@@ -115,8 +145,8 @@ void Apu::EnableWaveformViewer(uint32_t SizeX, uint32_t SizeY, uint32_t Resoluti
     channel3View->setPosition(0,SizeY);
     waveformViewerWindow=new sf::RenderWindow(sf::VideoMode(SizeX * 2, SizeY * 2), "Wave Viwer");
     channel1->viewer = channel1View;
-    //channel2->viewer = channel2View;
-    //channel3->viewer = channel3View;
+    channel2->viewer = channel2View;
+    channel3->viewer = channel3View;
     updateFrequency=updateFreqClocks;
     clocksSinceUpdate=0;
 }
@@ -141,13 +171,17 @@ bool Apu::SaveState(std::ofstream& out)
     out.write((const char*)(&channel1Clocks), sizeof(channel1Clocks));
     out.write((const char*)(&channel2Clocks), sizeof(channel2Clocks));
     out.write((const char*)(&channel3Clocks), sizeof(channel3Clocks));
+    channel3->SaveState(out);
     return true;
 }
 
 bool Apu::LoadState(std::ifstream& in)
 {
+    //reset the audio
+
     in.read((char*)(&channel1Clocks), sizeof(channel1Clocks));
     in.read((char*)(&channel2Clocks), sizeof(channel2Clocks));
     in.read((char*)(&channel3Clocks), sizeof(channel3Clocks));
+    channel3->LoadState(in);
     return true;
 }

@@ -1,4 +1,5 @@
 #include "WaveGenerator.h"
+#include <fstream>
 
 const uint16_t WaveVolumes[]= {0,255,255 /2,255/4};
 
@@ -93,4 +94,22 @@ bool WaveGenerator::HasChanged(void)
 
 void WaveGenerator::onSeek(sf::Time timeOffset)
 {
+}
+
+void WaveGenerator::SaveState(std::ostream& out)
+{
+    out.write((const char*)(&samplesSinceStart), sizeof(samplesSinceStart));
+    out.write((const char*)(&LastFrequency), sizeof(LastFrequency));
+    out.write((const char*)(&LastVolume), sizeof(LastVolume));
+    out.write((const char*)(&lastSampleCount), sizeof(lastSampleCount));
+    out.write((const char*)(&Changed), sizeof(Changed));
+}
+
+void WaveGenerator::LoadState(std::istream& in)
+{
+    in.read((char*)(&samplesSinceStart), sizeof(samplesSinceStart));
+    in.read((char*)(&LastFrequency), sizeof(LastFrequency));
+    in.read((char*)(&LastVolume), sizeof(LastVolume));
+    in.read((char*)(&lastSampleCount), sizeof(lastSampleCount));
+    in.read((char*)(&Changed), sizeof(Changed));
 }

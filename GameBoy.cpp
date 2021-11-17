@@ -324,6 +324,7 @@ void GameBoy::Run(void)
                 SaveState(file);
             }
         }
+        //std::cout <<"Running.\n";
         uint16_t Cycles=CPU.Tick();
 
         if(!Bit(MMU.Read(0xFF00), 5))
@@ -373,7 +374,7 @@ bool GameBoy::SaveState(const std::string& filename)
     APU.SaveState(out);
     GPU.SaveState(out);
     std::cout <<"State saved\n";
-    std::cout <<"PC " <<CPU.PC<<"\n";
+    CPU.DumpRegisters(std::cout);
     return true;
 }
 
@@ -383,13 +384,17 @@ bool GameBoy::LoadState(const std::string& filename)
     in.open(filename.c_str(), std::ifstream::in | std::ifstream::binary);
     if(!in.is_open())
         return false;
+
+    APU.Stop();
     Cartridge->LoadState(in);
     MMU.LoadState(in);
     CPU.LoadState(in);
     Time.LoadState(in);
     APU.LoadState(in);
     GPU.LoadState(in);
+    APU.Start();
     std::cout <<"State loaded\n";
-    std::cout <<"PC " <<CPU.PC<<"\n";
+    CPU.DumpRegisters(std::cout);
+    sf::sleep(sf::seconds(1));
     return true;
 }

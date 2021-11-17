@@ -360,9 +360,11 @@ bool Gpu::SaveState(std::ofstream& out)
     out.write((const char*)(&DmaTransferStarted), sizeof(DmaTransferStarted));
     return true;
 }
+
 bool Gpu::LoadState(std::ifstream& in)
 {
     uint8_t currentMode = 0;
+    std::cout << in.tellg() <<"\n";
     in.read((char*)(BGMap),MemoryMap::BGMap1Size + MemoryMap::BGMap2Size);
     in.read((char*)(OEM), MemoryMap::OemSize);
     in.read((char*)(CharMemory), MemoryMap::CRamSize);

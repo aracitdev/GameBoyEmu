@@ -16,6 +16,7 @@ public:
     void Init(Mmu* in);
 
     void Tick(uint16_t AddedCycles);
+    void Destroy(void);
 
     void EnableWaveformViewer(uint32_t SizeX, uint32_t SizeY, uint32_t Resolution, uint32_t samplesPerVertex, uint32_t updateFreqClocks);
 
@@ -23,6 +24,9 @@ public:
 
     bool SaveState(std::ofstream& out);
     bool LoadState(std::ifstream& in);
+
+    void Stop(void);
+    void Start(void);
 
     SquareGenerator* channel1;
     SquareGenerator* channel2;

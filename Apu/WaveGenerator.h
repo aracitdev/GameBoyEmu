@@ -31,7 +31,8 @@ public:
 
     virtual void onSeek(sf::Time timeOffset);
 
-
+    void SaveState(std::ostream& out);
+    void LoadState(std::istream& in);
 
     uint32_t samplesSinceStart;
     uint32_t sampleRate;
